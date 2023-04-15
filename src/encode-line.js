@@ -10,6 +10,7 @@ const { NotImplementedError } = require('../extensions/index.js');
  * For aabbbc should return 2a3bc
  *
  */
+
 function encodeLine( str ) {
   let counter = 1
   let result = ''
