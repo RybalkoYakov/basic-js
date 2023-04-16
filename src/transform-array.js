@@ -13,35 +13,49 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform( /*arr*/ ) {
-  // if (!(arr instanceof Array)) throw new Error("'arr' parameter must be an instance of the Array!")
-  //
-  // const copy = [...arr]
-  //
-  // const controlSequences = {
-  //   '--discard-next': function (arr, index) {
-  //     arr[index + 1] = null
-  //     arr.splice(index, 1)
-  //   },
-  //   '--discard-prev': function (arr, index) {
-  //     arr[index - 1] = null
-  //     arr.splice(index, 1)
-  //   },
-  //   '--double-next': function (arr, index) {
-  //     arr.splice(index + 1, 0, arr[index + 1])
-  //   },
-  //   '--double-prev': function (arr, index) {
-  //     arr.splice(index - 1, 0, arr[index - 1])
-  //   },
-  // }
-  //
-  // for (let i = 0; i < arr.length; i++) {
-  //   if (Object.keys(controlSequences).includes(arr[i])) {
-  //     controlSequences[arr[i]](copy, i)
-  //   }
-  // }
-  //
-  // return copy.filter(value => value !== null)
+function transform( arr ) {
+  if (!(arr instanceof Array)) throw new Error("'arr' parameter must be an instance of the Array!")
+
+  const copy = [...arr]
+
+  const controlSequences = {
+    '--discard-next': function (arr) {
+      const i = arr.indexOf('--discard-next')
+      arr[i + 1] = null
+      arr[i] = null
+    },
+    '--discard-prev': function (arr) {
+      const i = arr.indexOf('--discard-prev')
+      arr[i - 1] = null
+      arr[i] = null
+    },
+    '--double-next': function (arr) {
+      const i = arr.indexOf('--double-next')
+      if (arr[i + 1] !== null) {
+        arr[i] = null
+        arr.splice(i, 0, arr[i + 1])
+      } else {
+        arr[i] = null
+      }
+    },
+    '--double-prev': function (arr) {
+      const i = arr.indexOf('--double-prev')
+      if (arr[i - 1] !== null) {
+        arr[i] = null
+        arr.splice(i, 0, arr[i - 1])
+      } else {
+        arr[i] = null
+      }
+    },
+  }
+
+  for (let i = 0; i < copy.length; i++) {
+    if (Object.keys(controlSequences).includes(arr[i])) {
+      controlSequences[arr[i]](copy)
+    }
+  }
+
+  return copy.filter(value => value !== null && value !== undefined)
 }
 
 module.exports = {
