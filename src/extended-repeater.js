@@ -17,6 +17,10 @@ const { NotImplementedError } = require('../extensions/index.js');
  */
 function repeater( str, options ) {
   let {repeatTimes, separator, addition, additionRepeatTimes, additionSeparator} = options
+  if (typeof str === 'boolean') str = str.toString()
+  if (typeof addition === "boolean") addition = addition.toString()
+  if (str === null) str = 'null'
+  if (addition === null) addition = 'null'
 
   if (!separator) separator = '+'
   if (!addition) addition = ''
